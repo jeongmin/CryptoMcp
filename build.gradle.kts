@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.2.21"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "org.laggyrocket"
@@ -11,6 +12,15 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    // Ktor Client (using bundle)
+    implementation(libs.bundles.ktor.client)
+
+    // Kotlinx Libraries (using bundle)
+    implementation(libs.bundles.kotlinx)
+
+    // Logging
+    implementation(libs.slf4j.simple)
 }
 
 kotlin {
