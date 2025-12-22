@@ -1,16 +1,97 @@
 package org.laggyrocket
 
-//TIP 코드를 <b>실행</b>하려면 <shortcut actionId="Run"/>을(를) 누르거나
-// 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
-fun main() {
-    val name = "Kotlin"
-    //TIP 캐럿을 강조 표시된 텍스트에 놓고 <shortcut actionId="ShowIntentionActions"/>을(를) 누르면
-    // IntelliJ IDEA이(가) 수정을 제안하는 것을 확인할 수 있습니다.
-    println("Hello, " + name + "!")
 
-    for (i in 1..5) {
-        //TIP <shortcut actionId="Debug"/>을(를) 눌러 코드 디버그를 시작하세요. 1개의 <icon src="AllIcons.Debugger.Db_set_breakpoint"/> 중단점을 설정해 드렸습니다
-        // 언제든 <shortcut actionId="ToggleLineBreakpoint"/>을(를) 눌러 중단점을 더 추가할 수 있습니다.
-        println("i = $i")
+import io.modelcontextprotocol.kotlin.sdk.server.Server
+import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
+import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport
+import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.types.Implementation
+import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
+import kotlinx.serialization.json.*
+import kotlinx.io.asSource
+import kotlinx.io.asSink
+import kotlinx.io.buffered
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // Create MCP server instance
+    val server = Server(
+        serverInfo = Implementation(
+            name = "crypto-mcp-server",
+            version = "0.0.1"
+        ),
+        options = ServerOptions(
+            capabilities = ServerCapabilities(
+                tools = ServerCapabilities.Tools(listChanged = true)
+            )
+        )
+    ) {
+        "A basic MCP server for cryptocurrency information"
     }
+
+    // Add a simple echo tool
+    server.addTool(
+        name = "echo",
+        description = "Echoes back the provided message"
+    ) { request ->
+        val message = request.params.arguments?.get("message")?.jsonPrimitive?.content ?: "No message provided"
+
+        CallToolResult(
+            content = listOf(
+                TextContent(
+                    text = "Echo: $message"
+                )
+            )
+        )
+    }
+
+    // Add a greeting tool
+    server.addTool(
+        name = "greet",
+        description = "Greets a person by name"
+    ) { request ->
+        val name = request.params.arguments?.get("name")?.jsonPrimitive?.content ?: "stranger"
+
+        CallToolResult(
+            content = listOf(
+                TextContent(
+                    text = "Hello, $name! Welcome to the CryptoMcp server."
+                )
+            )
+        )
+    }
+
+    // Add a simple crypto info tool (placeholder)
+    server.addTool(
+        name = "get_crypto_info",
+        description = "Get basic information about a cryptocurrency (placeholder)"
+    ) { request ->
+        val symbol = request.params.arguments?.get("symbol")?.jsonPrimitive?.content ?: "BTC"
+
+        CallToolResult(
+            content = listOf(
+                TextContent(
+                    text = "Cryptocurrency: $symbol\nThis is a placeholder. Real crypto data integration coming soon!"
+                )
+            )
+        )
+    }
+
+    println("Starting MCP Server: crypto-mcp-server v1.0.0")
+    println("Available tools: echo, greet, get_crypto_info")
+    println("Listening on STDIO...")
+
+    // Connect to STDIO transport and start the server
+    val transport = StdioServerTransport(
+        inputStream = System.`in`.asSource().buffered(),
+        outputStream = System.out.asSink().buffered()
+    )
+
+    server.createSession(transport)
+    val done = Job()
+    server.onClose {
+        done.complete()
+    }
+    done.join()
 }
