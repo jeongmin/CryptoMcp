@@ -3,6 +3,7 @@ kotlin = "2.2.21"
 ktor = "3.0.3"
 kotlinx-serialization = "1.8.0"
 kotlinx-coroutines = "1.10.2"
+kotlinx-io = "0.8.2"
 slf4j = "2.0.16"
 shadow = "8.1.1"
 
@@ -18,9 +19,13 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 # Kotlinx Libraries
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 
 # Logging
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+# MCP SDK
+mcp-kotlin-sdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcp" }
 
 [bundles]
 ktor-client = [
