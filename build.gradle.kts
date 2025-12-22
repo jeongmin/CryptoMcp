@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.shadow)
     application
 }
 
@@ -20,8 +21,14 @@ dependencies {
     // Kotlinx Libraries (using bundle)
     implementation(libs.bundles.kotlinx)
 
+    // Kotlinx IO
+    implementation(libs.kotlinx.io.core)
+
     // Logging
     implementation(libs.slf4j.simple)
+
+    // MCP SDK
+    implementation(libs.mcp.kotlin.sdk)
 }
 
 kotlin {
