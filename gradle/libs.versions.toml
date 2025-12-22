@@ -5,6 +5,7 @@ kotlinx-serialization = "1.8.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-io = "0.8.2"
 slf4j = "2.0.16"
+mcp = "0.8.1"
 shadow = "8.1.1"
 
 [libraries]
